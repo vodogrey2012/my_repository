@@ -7,22 +7,22 @@
 #include <cassert>
 
 
-struct equation // структура данныйх уравнения
+struct equation // Г±ГІГ°ГіГЄГІГіГ°Г  Г¤Г Г­Г­Г»Г©Гµ ГіГ°Г ГўГ­ГҐГ­ГЁГї
 {
     float a, b, c; //ax^2+bx+c=0
-    float D;     //Дсикриминант
-    float x1, x2; // Корни
-    bool type_a, type_b; //Нулевые ли коэффициенты a и b
+    float D;     //Г„Г±ГЁГЄГ°ГЁГ¬ГЁГ­Г Г­ГІ
+    float x1, x2; // ГЉГ®Г°Г­ГЁ
+    bool type_a, type_b; //ГЌГіГ«ГҐГўГ»ГҐ Г«ГЁ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» a ГЁ b
 };
 
 
-void write_equation(equation); //Показ введенных данных
-float solver_sqrt(equation* pone); // Решение квадратного ураванения
-float solver_lin(equation* pone); // Решение линейного уравнения
-bool solver_const(equation* pone); // Решение при коэффициентах при х и х^2 равными 0
-bool read_float(float* number); // Правильность ввод данных
-void read(equation* one); //Ввод данных
-void myresult(equation* one); // вывод результата
+void write_equation(equation); //ГЏГ®ГЄГ Г§ ГўГўГҐГ¤ГҐГ­Г­Г»Гµ Г¤Г Г­Г­Г»Гµ
+float solver_sqrt(equation* pone); // ГђГҐГёГҐГ­ГЁГҐ ГЄГўГ Г¤Г°Г ГІГ­Г®ГЈГ® ГіГ°Г ГўГ Г­ГҐГ­ГЁГї
+float solver_lin(equation* pone); // ГђГҐГёГҐГ­ГЁГҐ Г«ГЁГ­ГҐГ©Г­Г®ГЈГ® ГіГ°Г ГўГ­ГҐГ­ГЁГї
+bool solver_const(equation* pone); // ГђГҐГёГҐГ­ГЁГҐ ГЇГ°ГЁ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ Гµ ГЇГ°ГЁ Гµ ГЁ Гµ^2 Г°Г ГўГ­Г»Г¬ГЁ 0
+bool read_float(float* number); // ГЏГ°Г ГўГЁГ«ГјГ­Г®Г±ГІГј ГўГўГ®Г¤ Г¤Г Г­Г­Г»Гµ
+void read(equation* one); //Г‚ГўГ®Г¤ Г¤Г Г­Г­Г»Гµ
+void myresult(equation* one); // ГўГ»ГўГ®Г¤ Г°ГҐГ§ГіГ«ГјГІГ ГІГ 
 bool unit_test();
 
 
@@ -35,7 +35,7 @@ int main()
     equation one;
     one.a=0;
     one.b=0;
-    one.c=0;  // инициализация начальных элементов
+    one.c=0;  // ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї Г­Г Г·Г Г«ГјГ­Г»Гµ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў
 
     read(&one);
     write_equation(one);
@@ -51,7 +51,7 @@ void read(equation* pone)
 {
 
     assert(pone!=NULL);
-    float d=0; // Четвертый коэффициент не объявленный в структуре
+    float d=0; // Г—ГҐГІГўГҐГ°ГІГ»Г© ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ Г­ГҐ Г®ГЎГєГїГўГ«ГҐГ­Г­Г»Г© Гў Г±ГІГ°ГіГЄГІГіГ°ГҐ
     float* pd=&d;
 
     printf("Enter the coefficients ax^2+bx+c=d \n")  ;
@@ -77,9 +77,9 @@ void read(equation* pone)
 bool read_float(float* variable)
 {
     assert(variable!=NULL);
-    char* data=new char; // ввод числа
-    unsigned int i; // длинна введенного числа, счетчик
-    int current; //символ числа, который проверяется
+    char* data=new char; // ГўГўГ®Г¤ Г·ГЁГ±Г«Г 
+    unsigned int i; // Г¤Г«ГЁГ­Г­Г  ГўГўГҐГ¤ГҐГ­Г­Г®ГЈГ® Г·ГЁГ±Г«Г , Г±Г·ГҐГІГ·ГЁГЄ
+    int current; //Г±ГЁГ¬ГўГ®Г« Г·ГЁГ±Г«Г , ГЄГ®ГІГ®Г°Г»Г© ГЇГ°Г®ГўГҐГ°ГїГҐГІГ±Гї
 
 
     scanf ("%s" , data);
@@ -87,7 +87,7 @@ bool read_float(float* variable)
     for (i=0; i<strlen(data); i++)
     {
         current=data[i];
-        if ( (current>=58 || current<=47) && (current!=43) && (current!=45) && (current!=46)  ) // проверка символа 0-9,".", "+", "-"
+        if ( (current>=58 || current<=47) && (current!=43) && (current!=45) && (current!=46)  ) // ГЇГ°Г®ГўГҐГ°ГЄГ  Г±ГЁГ¬ГўГ®Г«Г  0-9,".", "+", "-"
         {
             return false;
         }
@@ -115,7 +115,7 @@ float solver_sqrt(equation* pone)
 {
     assert(pone!=NULL);
     float d;
-    d=pone->b*pone->b-4*pone->a*pone->c; // Дискриминант
+    d=pone->b*pone->b-4*pone->a*pone->c; // Г„ГЁГ±ГЄГ°ГЁГ¬ГЁГ­Г Г­ГІ
     pone->x1=(-pone->b-sqrt(fabs(d)))/(2*pone->a);
     pone->x2=(-pone->b+sqrt(fabs(d)))/(2*pone->a);
 
