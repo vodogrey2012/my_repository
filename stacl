@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#define N 100
+
+typedef int Data;
+
+
+
+struct Stack
+{
+    int n;
+    Data a[N];
+};
+
+void stack_create(struct Stack* s);
+void stack_push(struct Stack * s, Data x);
+Data stack_pop(struct Stack * s);
+Data stack_get(struct Stack * s);
+void stack_print(struct Stack * s);
+int  stack_size(struct Stack * s);
+void stack_clear(struct Stack * s);
+int stack_sum(struct Stack * s);
+
+
+void stack_create(struct Stack* s)
+{
+    assert (s);
+    s -> n = 0;
+    return;
+}
+
+void stack_push(struct Stack * s, Data x)
+{
+    assert(s);
+    assert(s->n < N);
+    s->a[s->n] = x;
+    (s->n)++;
+    return;
+}
+
+Data stack_pop(struct Stack * s)
+{
+    if(s->n > 0)
+        (s->n)--;
+    return s->a[s->n];
+}
+
+Data stack_get(struct Stack * s)
+{
+    assert(s);
+    return s->a[(s->n) - 1];
+}
+
+void stack_print(struct Stack * s)
+{
+    assert(s);
+    int n = s->n , i = 0;
+    if (n == 0)
+    {
+        printf("Empty stack");
+        return;
+    }
+
+
+    for (i = 0 ; i < n ; i++)
+        printf("%d " , s -> a[i]);
+    return;
+
+
+}
+
+int  stack_size(struct Stack * s)
+{
+    assert(s);
+    return (s->n);
+}
+
+void stack_clear(struct Stack * s)
+{
+    assert(s);
+    s->n = 0;
+    return;
+}
+
+int stack_sum(struct Stack * s)
+{
+    assert(s);
+    if (s->n <= 1)
+        return 0;
+    else
+    {
+        s->a[s->n] = s->a[s->n - 1] + s->a[s->n - 2];
+        (s->n)++;
+        return 1;
+    }
+}
+
+
+int main()
+{
+    struct Stack x;
+    stack_create(&x);
+    stack_push(&x , 1);
+    stack_push(&x , 2);
+    printf("%d\n" , stack_sum(&x));
+    stack_print(&x);
+
+
+    return 0;
+}
