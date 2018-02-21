@@ -1,1 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#define maxlen 5
 
+const char info[] = "info.txt";
+
+typedef struct block
+{
+    int name;
+    char message[30];
+    int left;
+    int right;
+} block;
+
+block file_to_struct(int name);
+FILE* struct_to_file(block a);
+block create_new_qw(block from);
+void ask_question(block cur);
+int is_question(block cur);
+
+
+int main()
+{
+
+    char ans = 'w';
+    printf("Work or clean?\n");
+    //scanf(" %c" , &ans);
+    if (ans == 'w')
+    {
+        block a = file_to_struct(1);
+        ask_question(a);
+    }
+    else
+    {
+        remove("1.txt");
+        remove("2.txt");
+        remove("3.txt");
+        block a; 
+        a.name = 1;
+        strcpy(a.message , "beclemishev");
+        a.left = 0;
+        a.right = 0;
+        struct_to_file(a);
+        FILE* file = fopen(info , "w");
+        fprintf(file , "%d" , 1);
+        fclose(file);
+    }
+
+
+
+
+    /*
+    block b;
+    b = file_to_struct(5);
+    printf("%d %s %d %d" ,b.name , b.message , b.left , b.right);
+    */
+    return 0;
+}
+
+FILE* struct_to_file(block a)
+                                                                                                                                                                                                  1,1       Наверху
