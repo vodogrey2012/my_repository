@@ -1,0 +1,242 @@
+#include <iostream>
+#include <cstdio>
+#include <malloc.h>
+#include <assert.h>
+#include <stdlib.h>
+
+using namespace std;
+
+FILE* open_tree();
+void goto_yes_block(FILE* file);
+void goto_no_block(FILE* file);
+int show_message(FILE* file);
+void ask_question(FILE* file);
+void add_new_block(FILE* file);
+void go_back_while(char c , FILE* file);
+void who_is_it(char** pman , char** pdifferent , char** pwrong_man , FILE* file);
+void am_i_right(FILE* file);
+int want_to_continue();
+
+const char name_of_file[] = "data.txt";
+const char base_line[] = "man(old(prut)(anicin))(old(lunina)(markasheva))";
+
+int main()
+{
+    FILE* file = open_tree();
+    int cont = 0;
+    do
+    {
+        if (system("clear")) system( "cls" );
+        ask_question(file);
+        am_i_right(file);
+        cont = want_to_continue();
+    }while(cont);
+
+
+    fclose(file);
+    return 0;
+}
+
+
+FILE* open_tree()
+{
+    FILE* file = fopen(name_of_file , "r+");
+    char ans;
+    if(!file)
+    {
+        printf("CAN'T OPEN %s! Do you want to create it?(y/n) " , name_of_file);
+        ans = getchar();
+        getchar();
+        if(ans == 'y')
+        {
+            file = fopen(name_of_file , "w");
+            fprintf(file , "%s" , base_line);
+            fclose(file);
+            file = fopen(name_of_file , "r+");
+        }
+        else
+            exit(0);
+    }
+    rewind(file);
+    return file;
+}
+
+void goto_yes_block(FILE* file)
+{
+    fseek(file , 1 , SEEK_CUR);
+    return;
+}
+
+void goto_no_block(FILE* file)
+{
+    int c = 0;
+    int open_closed = 1;
+    fseek(file , 1 , SEEK_CUR);
+    while(open_closed != 0)
+    {
+        c = fgetc(file);
+        if(c == '(')
+            open_closed++;
+        if(c == ')')
+            open_closed--;
+    }
+    fseek(file , 1 , SEEK_CUR);
+    return;
+}
+
+int show_message(FILE* file)
+{
+    char* message;
+    fscanf(file , "%m[^(^)]" , &message);
+    int c = fgetc(file);
+    ungetc(c , file);
+    if(c == '(')
+    {
+        printf("%s?(y/n) " , message);
+        free(message);
+        return 1;
+    }
+    else
+    {
+        printf("It is %s" , message);
+        free(message);
+        return 0;
+    }
+
+}
+
+void ask_question(FILE* file)
+{
+    rewind(file);
+    int is_question = 1;
+    char ans = 0;
+    is_question = show_message(file);
+    while(is_question)
+    {
+        ans = getchar();
+        getchar();
+        if(ans == 'y')
+            goto_yes_block(file);
+        else
+            goto_no_block(file);
+
+        is_question = show_message(file);
+    }
+    return;
+}
+
+void add_new_block(FILE* file)
+{
+    char* man , * different , * wrong_man;
+    who_is_it(&man , &different , &wrong_man , file);
+
+    fpos_t pos;
+    fgetpos(file , &pos); //man(old(bec|)(anicin))(old(lunina)(markasheva))
+
+    char* end_part;
+    fscanf(file , "%ms" , &end_part); // )(anicin))(old(lunina)(markasheva))
+
+    fsetpos(file , &pos); //man(old(bec|)(anicin))(old(lunina)(markasheva))
+    fseek(file , 1 , SEEK_CUR);  //man(old(bec)|(anicin))(old(lunina)(markasheva))
+
+    fprintf(file , "(%s)\n" , man);       //man(old(bec)(chubarov)|
+    go_back_while(')' , file);                   //man(old(bec)(chubarov|)
+    go_back_while('(' , file);                   //man(old(bec)|(chubarov)
+    go_back_while(')' , file);                   //man(old(bec|)(chubarov)
+    go_back_while('(' , file);                   //man(old|(bec)(chubarov)
+
+    char* middle_part;
+    fscanf(file , "%m[^\n]" , &middle_part);     // (bec)(chubarov)
+                                          //man(old(bec)(chubarov)|
+    go_back_while(')' , file);                   //man(old(bec)(chubarov|)
+    go_back_while('(' , file);                   //man(old(bec)|(chubarov)
+    go_back_while(')' , file);                   //man(old(bec|)(chubarov)
+    go_back_while('(' , file);                   //man(old|(bec)(chubarov)
+    fseek(file , 1 , SEEK_CUR);           //man(old(|bec)(chubarov)
+
+    fprintf(file , "%s" , different);     //man(old(likes_vans|rov)
+    fprintf(file , "%s" , middle_part);   //man(old(likes_vans(bec)(chubarov)|
+    fprintf(file , "%s" , end_part);      //man(old(likes_vans(bec)(chubarov))(anicin))(old(lunina)(markasheva))|
+
+    free(end_part);
+    free(middle_part);
+    free(wrong_man);
+    free(man);
+    free(different);
+
+
+}
+
+void go_back_while(char c , FILE* file)
+{
+    char cur = 0;
+    int res = 0;
+    while(cur != c)
+    {
+        res = fseek(file , -1 , SEEK_CUR);
+        assert(!res);
+        cur = fgetc(file);
+        res = fseek(file , -1 , SEEK_CUR);
+        assert(!res);
+    }
+    return;
+}
+
+void who_is_it( char** pman , char** pdifferent , char** pwrong_man , FILE* file)
+{
+    go_back_while('(' , file);         //man(old|(bec)(anicin))(old(lunina)(markasheva))
+    fseek(file , 1 , SEEK_CUR); //man(old(|bec)(anicin))(old(lunina)(markasheva))
+    fscanf(file , "%m[^')']" , pwrong_man); //man(old(bec|)(anicin))(old(lunina)(markasheva))
+    assert(*pwrong_man);
+
+    do
+    {
+        printf("Who is it?\n");
+        scanf("%m[^\n]" , pman);
+        getchar();
+    }while(!*pman);
+
+    do
+    {
+        printf("What %s differs from %s?\n" , *pwrong_man , *pman);
+        scanf("%m[^\n]" , pdifferent);
+        getchar();
+    }while(!*pdifferent);
+
+    return;
+}
+
+void am_i_right(FILE* file)
+{
+    printf(" Am I right?(y/n) ");
+    char ans;
+    ans = getchar();
+    getchar();
+    if(ans == 'y')
+    {
+        printf("I know it! ");
+        return;
+    }
+    else
+    {
+        printf("Do you want to add this person?(y/n) ");
+        ans = getchar();
+        getchar();
+        if(ans == 'y')
+            add_new_block(file);
+        return;
+    }
+
+}
+
+int want_to_continue()
+{
+    char ans = 0;
+    printf("Do you want to continue?(y/n) ");
+    ans = getchar();
+    getchar();
+    if(ans == 'y')
+        return 1;
+    else
+        return 0;
+}
